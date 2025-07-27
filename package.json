@@ -1,0 +1,65 @@
+{
+  "name": "agrierp",
+  "version": "1.0.0",
+  "description": "Comprehensive agriculture-based ERP system",
+  "main": "index.js",
+  "scripts": {
+    "setup": "npm install && npm run setup:backend && npm run setup:frontend",
+    "setup:backend": "cd backend && npm install",
+    "setup:frontend": "cd frontend && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "cd backend && npm start",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "docker:dev": "docker-compose -f .devcontainer/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f .devcontainer/docker-compose.yml down",
+    "db:migrate": "cd backend && npm run db:migrate",
+    "db:seed": "cd backend && npm run db:seed",
+    "db:reset": "cd backend && npm run db:reset"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kannankannan19302/ERP.git"
+  },
+  "keywords": [
+    "erp",
+    "agriculture",
+    "nodejs",
+    "react",
+    "nextjs",
+    "postgresql"
+  ],
+  "author": "AgriERP Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kannankannan19302/ERP/issues"
+  },
+  "homepage": "https://github.com/kannankannan19302/ERP#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "backend/**/*.js": [
+      "cd backend && npm run lint"
+    ],
+    "frontend/**/*.{js,jsx}": [
+      "cd frontend && npm run lint"
+    ]
+  }
+}
