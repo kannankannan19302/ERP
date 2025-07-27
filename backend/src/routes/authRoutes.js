@@ -1,42 +1,63 @@
 const express = require('express');
 const router = express.Router();
-const AuthMiddleware = require('../middleware/auth');
+const authModule = require('../modules/auth');
 const AuditMiddleware = require('../middleware/audit');
 const ErrorHandler = require('../middleware/errorHandler');
 
-// Placeholder auth routes - to be implemented
+// Use the auth module routes with audit middleware
 router.post('/login', 
   AuditMiddleware.auditAuth('LOGIN'),
-  ErrorHandler.asyncHandler(async (req, res) => {
-    res.json({
-      success: true,
-      message: 'Login endpoint - to be implemented',
-      data: {
-        user: { id: '1', email: 'admin@agrierp.com', name: 'Admin User' },
-        token: 'sample-jwt-token'
-      }
-    });
-  })
+  authModule.validator.validateLogin,
+  ErrorHandler.asyncHandler(authModule.controller.login)
+);
+
+router.post('/register',
+  AuditMiddleware.auditAuth('REGISTER'),
+  authModule.validator.validateRegistration,
+  ErrorHandler.asyncHandler(authModule.controller.register)
 );
 
 router.post('/logout',
-  AuthMiddleware.authenticate,
   AuditMiddleware.auditAuth('LOGOUT'),
-  ErrorHandler.asyncHandler(async (req, res) => {
-    res.json({
-      success: true,
-      message: 'Logout successful'
-    });
-  })
+  authModule.validator.validateLogout,
+  ErrorHandler.asyncHandler(authModule.controller.logout)
 );
 
 router.post('/refresh',
-  ErrorHandler.asyncHandler(async (req, res) => {
-    res.json({
-      success: true,
-      message: 'Token refresh endpoint - to be implemented'
-    });
-  })
+  authModule.validator.validateRefreshToken,
+  ErrorHandler.asyncHandler(authModule.controller.refreshToken)
+);
+
+router.post('/forgot-password',
+  authModule.validator.validateForgotPassword,
+  ErrorHandler.asyncHandler(authModule.controller.forgotPassword)
+);
+
+router.post('/reset-password',
+  authModule.validator.validateResetPassword,
+  ErrorHandler.asyncHandler(authModule.controller.resetPassword)
+);
+
+router.get('/verify-email/:token',
+  ErrorHandler.asyncHandler(authModule.controller.verifyEmail)
+);
+
+// Protected routes
+router.get('/profile',
+  require('../middleware/auth'),
+  ErrorHandler.asyncHandler(authModule.controller.getProfile)
+);
+
+router.put('/profile',
+  require('../middleware/auth'),
+  authModule.validator.validateUpdateProfile,
+  ErrorHandler.asyncHandler(authModule.controller.updateProfile)
+);
+
+router.post('/change-password',
+  require('../middleware/auth'),
+  authModule.validator.validateChangePassword,
+  ErrorHandler.asyncHandler(authModule.controller.changePassword)
 );
 
 module.exports = router;
